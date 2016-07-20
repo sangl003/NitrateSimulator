@@ -1,0 +1,479 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="description" content="Geodesign - Seven Mile Creek">
+  <meta name="author" content="University of Minnesota">
+  <title>Geodesign - Seven Mile Creek</title>
+
+  <!-- Calcite Maps -->
+  <link rel="stylesheet" href="css/calcite-maps-arcgis-3.x.min.css"-->
+  <link rel="stylesheet" href="css/app.css"-->
+
+  <!-- ArcGIS JS 3.x -->
+  <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/themes/calcite/dijit/calcite.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/themes/calcite/esri/esri.css">
+
+</head>
+
+<body class="calcite calcite-maps nav-position-top panel-right zoom-top-left layout-mobile-focus">
+
+  <div class="modal fade" id="groupNameModal" tabindex="-1" role="dialog" aria-labelledby="groupNameModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="groupNameHeading">Choose Group Name</h4>
+        </div>
+        <div class="modal-body">
+          <form id="groupNameChoose">
+            <div class="form-group has-feedback">
+              <label class="control-label" for="groupName">Group name</label>
+              <input type="text" class="form-control" id="groupName" aria-describedby="groupNameStatus" autocomplete="off">
+              <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+              <span id="groupNameStatus" class="sr-only status-text">(invalid)</span>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" disabled>OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar calcite-text-dark navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainNav" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+
+        <div class="navbar-title">
+          <div class="navbar-main-title text-overflow">Seven Mile Creek Geodesign</div>
+        </div>
+      </div>
+
+      <!-- Navbar collapse -->
+      <div id="mainNav" class="collapse navbar-collapse" aria-expanded="false">
+        <ul class="nav nav-pills navbar-right" role="tablist" id="navTabs">
+          <li role="presentation" class="active"><a href="#draw" aria-controls="draw" role="tab" data-toggle="tab">Draw</a></li>
+          <li role="presentation"><a href="#results" aria-controls="results" role="tab" data-toggle="tab">Results</a></li>
+          <li role="presentation"><a href="#compare" aria-controls="compare" role="tab" data-toggle="tab">Compare</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div><!--/.container-fluid -->
+  </nav><!--/.navbar -->
+
+  <!-- Map Container  -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active draw-tab" id="draw">
+      <div class="map-container">
+        <div id="mapViewDiv" class="map-position-absolute">
+          <div id="HomeButton"></div>
+        </div>
+      </div>
+
+      <!-- Draw Tab Main Panels -->
+      <div class="panel-container">
+        <div id="panelDrawAccordion" class="panel-group"  role="tablist" aria-multiselectable="true">
+                
+          <!-- Drawing Tools Panel -->
+          <div id="panelDraw" class="panel">
+            <div id="headingDraw" class="panel-heading" role="tab">
+              <div class="panel-title">
+                <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseDraw" data-parent="#panelDrawAccordion" aria-expanded="true" aria-controls="collapseDraw"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span> Drawing Tools</a>
+              </div>
+            </div>
+            <div id="collapseDraw" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingDraw">
+              <div class="panel-body">
+                <div class="template-picker-wrapper">
+                    <div id="templatePickerDiv"></div>
+                </div>
+                <p class="drawSettings">
+                    <label>Drawing:
+                        <select id="drawToolSelector">
+                            <option value="FREEHAND_POLYGON" selected>areas</option>
+                            <option value="POLYLINE">lines (click points)</option>
+                            <option value="FREEHAND_POLYLINE">lines (freehand)</option>
+                            <option value="POINT">parcels</option>
+                        </select>
+                    </label>
+                    <br><br>
+                    <label>Buffer (ft): <input type="number" name="drawToolPolylineBuffer" id="drawToolPolylineBuffer" inputmode="numeric" min="50" max="1000" value="50"></label>
+                    <button id="autobufferTool" type="button" class="btn btn-primary" disabled>Buffer all water</button>
+                </p>
+
+                <div class="button-group clearfix">
+                    <button id="drawToolErase" type="button" class="btn btn-primary btn-lg">Erase</button>
+                    <button id="drawToolUndo" type="button" class="btn btn-primary" disabled>Undo</button>
+                    <button id="drawToolStop" type="button" class="btn btn-primary">Stop</button>
+                    <button id="drawToolClear" type="button" class="btn btn-primary">Clear All</button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Save and Load Design Panel -->
+          <div id="panelSaveLoad" class="panel">
+            <div id="headingSaveLoad" class="panel-heading" role="tab">
+              <div class="panel-title">
+                <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseSaveLoad" data-parent="#panelDrawAccordion" aria-expanded="true" aria-controls="collapseSaveLoad"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Save and Load Designs</a>
+              </div>
+            </div>
+            <div id="collapseSaveLoad" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSaveLoad">
+              <div class="panel-body">
+                <form id="designSaveLoad">
+                  <div class="form-group has-feedback">
+                    <label class="control-label" for="designSaveName">Save design name</label>
+                    <input type="text" class="form-control" id="designSaveName" aria-describedby="designSaveNameStatus" autocomplete="off"> 
+                    <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                    <span id="designSaveNameStatus" class="sr-only status-text">(invalid)</span>
+                  </div>
+                </form>
+                <div class="button-group clearfix">
+                    <button id="designToolSave" type="button" class="btn btn-primary" disabled>Save Design</button>
+                    <button id="designToolLoad" type="button" class="btn btn-primary" data-toggle="modal" data-target="#designLoadModal">Load Design</button>
+                </div>
+                <p class="group-name">(group &quot;<span class="group-name-display"></span>&quot;)</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layers Panel -->
+          <div id="panelLayers" class="panel">
+            <div id="headingLayers" class="panel-heading" role="tab">
+              <div class="panel-title">
+                <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseLayers" data-parent="#panelDrawAccordion" aria-expanded="true" aria-controls="collapseLayers"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Layers</a>
+              </div>
+            </div>
+            <div id="collapseLayers" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingLayers">
+              <div class="panel-body">
+                <div class="layer-sliders">
+                  <div id="layerSlidersReference"></div>
+                  <div id="layerSlidersData"></div>
+                </div>
+                <div class="button-group clearfix">
+                  <button id="basemapToggler" class="btn btn-primary btn-lg">Toggle basemap on/off</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Legend Panel -->
+          <div id="panelLegend" class="panel">
+            <div id="headingLegend" class="panel-heading" role="tab">
+              <div class="panel-title">
+                <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseLegend" data-parent="#panelDrawAccordion" aria-expanded="true" aria-controls="collapseLegend"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Legend</a>
+              </div>
+            </div>
+            <div id="collapseLegend" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingLegend">
+              <div class="panel-body">
+                <div id="legendDiv"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info Panel -->
+
+          <div id="panelInfo" class="panel collapse">
+            <div id="headingInfo" class="panel-heading" role="tab">
+              <div class="panel-title">
+                <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseInfo" aria-expanded="true" aria-controls="collapseInfo"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Info</a>
+              </div>
+            </div>
+            <div id="collapseInfo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingInfo">
+              <div class="panel-body">
+                <p>This is a great place to describe what your application is about.</p>
+              </div>
+            </div>
+          </div>
+        </div> <!-- /.panel-group -->
+      </div> <!-- /.panel-container -->
+
+      <!-- Design Acreage (draw only) -->
+      <div id="drawAcreage" class="panel-container">
+        <div class="panel">
+          <div id="headingDesignAcreage" class="panel-heading" role="tab">
+            <div class="panel-title">
+              <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseDesignAcreage" aria-expanded="true" aria-controls="collapseDesignAcreage"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Design Acreage</a>
+            </div>
+          </div>
+
+          <div id="collapseDesignAcreage" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingDesignAcreage">
+            <div class="panel-body">
+              <table class="table table-bordered table-striped table-condensed">
+                  <thead>
+                      <tr>
+                          <th>Practice</th>
+                          <th>Acres</th>
+                          <th>%</th>
+                          <th>Biomass</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <th>Base</th>
+                          <td id="practiceRunning_8_acres"></td>
+                          <td id="practiceRunning_8_percent"></td>
+                          <td>--</td>
+                      </tr>
+                      <tr>
+                          <th>Alfalfa</th>
+                          <td id="practiceRunning_7_acres"></td>
+                          <td id="practiceRunning_7_percent"></td>
+                          <td>--</td>                          
+                      <tr>
+                          <th>Cons. Till.</th>
+                          <td id="practiceRunning_1_acres"></td>
+                          <td id="practiceRunning_1_percent"></td>
+                          <td>--</td>
+                      </tr>
+                      <tr>
+                          <th>Low Phos.</th>
+                          <td id="practiceRunning_4_acres"></td>
+                          <td id="practiceRunning_4_percent"></td>
+                          <td>--</td>
+                      </tr>
+                      <tr>
+                          <th>Prairie Grass</th>
+                          <td id="practiceRunning_5_acres"></td>
+                          <td id="practiceRunning_5_percent"></td>
+                          <td id="practiceRunning_5_biomass"></td>
+                      </tr>
+                      <tr>
+                          <th>Switchgrass</th>
+                          <td id="practiceRunning_6_acres"></td>
+                          <td id="practiceRunning_6_percent"></td>
+                          <td id="practiceRunning_6_biomass"></td>
+                      </tr>
+                      <tr>
+                          <th>Stover Removal</th>
+                          <td id="practiceRunning_2_acres"></td>
+                          <td id="practiceRunning_2_percent"></td>
+                          <td id="practiceRunning_2_biomass"></td>
+                      </tr>
+                      <tr>
+                          <th>S.R. + Cover Crop</th>
+                          <td id="practiceRunning_3_acres"></td>
+                          <td id="practiceRunning_3_percent"></td>
+                          <td id="practiceRunning_3_biomass"></td>
+                      </tr>
+                      <tr>
+                          <th><strong>Total</strong></th>
+                          <td>&nbsp;</td>
+                          <td>&nbsp;</td>
+                          <td id="practiceRunning_total_biomass"></td>
+                      </tr>
+                  </tbody>
+              </table>
+            </div> <!-- /.panel-body -->
+          </div>
+        </div><!-- /#drawAcreage -->
+      </div><!-- /.panel-container -->
+
+      <div class="modal fade" id="designLoadModal" tabindex="-1" role="dialog" aria-labelledby="designLoadModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Load Existing Design</h4>
+            </div>
+            <div class="modal-body">
+              <p class="bg-warning">Loading a design will erase your current design</p>
+              <form id="loadDesignNameForm">
+                <div class="input-group">
+                  <span class="input-group-addon" id="loadDesignNameLabel">Name</span>
+                  <select class="form-control group-design-names" id="loadDesignName" placeholder="Design name" aria-describedby="loadDesignNameLabel"></select>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary">Load design</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.draw-tab -->
+
+    <div role="tabpanel" class="tab-pane results-tab" id="results">
+      <div class="map-container results">
+        <div id="mapResultsViewDiv" class="map-position-absolute"></div>
+      </div><!-- /.container -->
+
+      <!-- Results Design Name Panel -->
+      <div class="panel-container">
+        <div id="panelResultsAccordion" class="panel-group"  role="tablist" aria-multiselectable="true">
+          <div id="panelResultsDesignName" class="panel">
+            <div id="headingResultsDesignName" class="panel-heading" role="tab">
+              <div class="panel-title">
+                <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseResultsDesignName" aria-expanded="true" aria-controls="collapseResultsDesignName"><span class="glyphicon glyphicon glyphicon-cog" aria-hidden="true"></span> View Design Results</a>
+              </div>
+            </div>
+            <div id="collapseResultsDesignName" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingResultsDesignName">
+              <div class="panel-body">
+                <form id="resultsDesignName">
+                  <div class="input-group">
+                    <span class="input-group-addon" id="resultsDesignNameLabel">Name</span>
+                    <select class="form-control group-design-names" placeholder="Design name" aria-describedby="resultsDesignNameLabel"></select>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div id="panelResultsPrices" class="panel panel-prices">
+            <div id="headingResultsPrices" class="panel-heading" role="tab">
+              <div class="panel-title">
+                <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseResultsPrices" aria-expanded="true" aria-controls="collapseResultsPrices"><span class="glyphicon glyphicon glyphicon-usd" aria-hidden="true"></span> Prices</a>
+              </div>
+            </div>
+            <div id="collapseResultsPrices" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingResultsPrices">
+              <div class="panel-body">
+
+                <div class="price-control" id="priceControlCornR">
+                  <span>Corn Price<br><span class="price-control-current-corn">$3.25</span></span>
+                  <div id="cornPriceSliderR"></div>
+                </div>
+                <div class="price-control" id="priceControlSoyR">
+                  <span>Soybean Price<br><span class="price-control-current-soy">$8.75</span></span>
+                  <div id="soyPriceSliderR"></div>
+                </div>
+                <div class="price-control" id="priceControlBioR">
+                  <span>Biomass Price<br><span class="price-control-current-bio">$50</span></span>
+                  <div id="bioPriceSliderR"></div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div> <!-- /.panel-group -->
+      </div> <!-- /.panel-container -->
+
+      <div class="results-area results-single" id="resultsDiv"></div>
+
+    </div>
+
+    <div role="tabpanel" class="tab-pane compare-tab" id="compare">
+      <div class="map-container thirds">
+        <div id="mapCompare1ViewDiv" class="map-position-relative"></div>
+      </div><!-- /.container -->
+      <div class="map-container thirds">
+        <div id="mapCompare2ViewDiv" class="map-position-relative"></div>
+      </div><!-- /.container -->
+      <div class="map-container thirds"> 
+        <div id="mapCompare3ViewDiv" class="map-position-relative"></div>
+      </div><!-- /.container -->
+
+      <!-- Compare Design Names Panel -->
+      <div class="panel-container">
+        <div id="panelcompareAccordion" class="panel-group"  role="tablist" aria-multiselectable="true">
+          <div id="panelcompareDesignName" class="panel">
+            <div id="headingcompareDesignName" class="panel-heading" role="tab">
+              <div class="panel-title">
+                <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapsecompareDesignName" aria-expanded="true" aria-controls="collapsecompareDesignName"><span class="glyphicon glyphicon glyphicon-cog" aria-hidden="true"></span> Designs to Compare</a>
+              </div>
+            </div>
+            <div id="collapsecompareDesignName" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingcompareDesignName">
+              <div class="panel-body">
+                <form id="compareDesignName">
+                  <div class="form-group">
+                    <label for="compareDesignName1">First Design</label>
+                    <select class="form-control group-design-names" id="compareDesignName1"></select>
+                  </div>
+                  <div class="form-group">
+                    <label for="compareDesignName2">Second Design</label>
+                    <select class="form-control group-design-names" id="compareDesignName2"></select>
+                  </div>
+                  <div class="form-group">
+                    <label for="compareDesignName3">Third Design</label>
+                    <select class="form-control group-design-names" id="compareDesignName3"></select>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div id="panelComparePrices" class="panel panel-prices">
+            <div id="headingComparePrices" class="panel-heading" role="tab">
+              <div class="panel-title">
+                <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseComparePrices" aria-expanded="true" aria-controls="collapseComparePrices"><span class="glyphicon glyphicon glyphicon-usd" aria-hidden="true"></span> Prices</a>
+              </div>
+            </div>
+            <div id="collapseComparePrices" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingComparePrices">
+              <div class="panel-body">
+
+                <div class="price-control" id="priceControlCornC">
+                  <span>Corn Price<br><span class="price-control-current-corn">$3.25</span></span>
+                  <div id="cornPriceSliderC"></div>
+                </div>
+                <div class="price-control" id="priceControlSoyC">
+                  <span>Soybean Price<br><span class="price-control-current-soy">$8.75</span></span>
+                  <div id="soyPriceSliderC"></div>
+                </div>
+                <div class="price-control" id="priceControlBioC">
+                  <span>Biomass Price<br><span class="price-control-current-bio">$50</span></span>
+                  <div id="bioPriceSliderC"></div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div> <!-- /.panel-group -->
+      </div> <!-- /.panel-container -->
+      
+      <div class="results-area results-compare" id="compareDiv"></div>
+
+    </div>
+  </div>
+
+  <div id="loadingMask" class="loading-mask">
+    <div id="loadingSpinner" class="uil-default-css" style="transform:scale(0.46);">
+      <div style="top:80px;left:93px;width:14px;height:40px;background:#000;-webkit-transform:rotate(0deg) translate(0,-60px);transform:rotate(0deg) translate(0,-60px);border-radius:10px;position:absolute;"></div><div style="top:80px;left:93px;width:14px;height:40px;background:#000;-webkit-transform:rotate(30deg) translate(0,-60px);transform:rotate(30deg) translate(0,-60px);border-radius:10px;position:absolute;"></div><div style="top:80px;left:93px;width:14px;height:40px;background:#000;-webkit-transform:rotate(60deg) translate(0,-60px);transform:rotate(60deg) translate(0,-60px);border-radius:10px;position:absolute;"></div><div style="top:80px;left:93px;width:14px;height:40px;background:#000;-webkit-transform:rotate(90deg) translate(0,-60px);transform:rotate(90deg) translate(0,-60px);border-radius:10px;position:absolute;"></div><div style="top:80px;left:93px;width:14px;height:40px;background:#000;-webkit-transform:rotate(120deg) translate(0,-60px);transform:rotate(120deg) translate(0,-60px);border-radius:10px;position:absolute;"></div><div style="top:80px;left:93px;width:14px;height:40px;background:#000;-webkit-transform:rotate(150deg) translate(0,-60px);transform:rotate(150deg) translate(0,-60px);border-radius:10px;position:absolute;"></div><div style="top:80px;left:93px;width:14px;height:40px;background:#000;-webkit-transform:rotate(180deg) translate(0,-60px);transform:rotate(180deg) translate(0,-60px);border-radius:10px;position:absolute;"></div><div style="top:80px;left:93px;width:14px;height:40px;background:#000;-webkit-transform:rotate(210deg) translate(0,-60px);transform:rotate(210deg) translate(0,-60px);border-radius:10px;position:absolute;"></div><div style="top:80px;left:93px;width:14px;height:40px;background:#000;-webkit-transform:rotate(240deg) translate(0,-60px);transform:rotate(240deg) translate(0,-60px);border-radius:10px;position:absolute;"></div><div style="top:80px;left:93px;width:14px;height:40px;background:#000;-webkit-transform:rotate(270deg) translate(0,-60px);transform:rotate(270deg) translate(0,-60px);border-radius:10px;position:absolute;"></div><div style="top:80px;left:93px;width:14px;height:40px;background:#000;-webkit-transform:rotate(300deg) translate(0,-60px);transform:rotate(300deg) translate(0,-60px);border-radius:10px;position:absolute;"></div><div style="top:80px;left:93px;width:14px;height:40px;background:#000;-webkit-transform:rotate(330deg) translate(0,-60px);transform:rotate(330deg) translate(0,-60px);border-radius:10px;position:absolute;">
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var dojoConfig = {
+        isDebug: ((window.location.search).indexOf("?debug") > -1), // debug when query string=?debug
+        packages: [
+            {
+                name: "bootstrap",
+                location: location.pathname.replace(/\/[^/]+$/, "") + "vendor/dojo-bootstrap"
+            },
+            {
+                name: "calcite-maps",
+                location: location.pathname.replace(/\/[^/]+$/, "") + "js/dojo"
+            },
+            {
+                name: "d3",
+                location: location.pathname.replace(/\/[^/]+$/, "") + "vendor/d3"
+            }
+
+        ]
+        // aliases: [
+        //   ["d3", "vendor/d3/d3.min.js"]
+        // ]
+    };
+  </script>
+
+  <!-- ArcGIS JS 3.x -->
+  <script src="https://js.arcgis.com/3.16/"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/economics.js"></script>
+
+</body>
+</html>
+

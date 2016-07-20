@@ -1,0 +1,388 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.calcite-maps.zoom-top-left .esriSimpleSlider {
+  margin-top: 59px;
+}
+
+.calcite-maps.layout-mobile-focus .navbar-title {
+  left: auto;
+}
+.nav > li > a {
+  height: 46px;
+  padding: 8px 15px;
+  font-size: 17px;
+}
+
+@media (max-width: 767px) {
+  #mainNav {
+    right: 2px;
+  }
+  .calcite-maps .nav li {
+      background-color: #fff;
+  }
+}
+
+#drawAcreage {
+  position: absolute;
+  bottom: 0;
+  right: 13px;
+  width: 350px;
+  top: auto;
+}
+
+#drawAcreage thead tr {
+  background-color: #cfcfcf;
+}
+#drawAcreage table th,
+#drawAcreage table td {
+  padding: 0.25rem 0.5rem;
+}
+.calcite-maps .map-container.thirds {
+  float: left;
+  width: calc((100% - 376px) / 3);
+  margin-top: 46px;
+}
+
+@media (max-width: 767px) {
+  .calcite-maps .map-container.thirds {
+    width: calc(100% / 3);
+  }
+}
+
+.calcite-maps .panel-body {
+  max-height: none;
+}
+
+.button-group {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.button-group .active {
+  background-color: #ccc;
+}
+
+#autobufferTool {
+  margin-left: 1em;
+}
+
+#drawToolPolylineBuffer {
+  width: 6em;
+}
+
+.group-name {
+  margin-top: 1em;
+  text-align: center;
+}
+
+/* Form validation */
+#designSaveLoad .glyphicon {
+  display: none;
+}
+
+#designSaveLoad .has-success .glyphicon,
+#designSaveLoad .has-error .glyphicon {
+  display: block;
+}
+
+#groupNameChoose .glyphicon {
+  display: none;
+}
+
+#groupNameChoose .has-success .glyphicon,
+#groupNameChoose .has-error .glyphicon {
+  display: block;
+}
+
+.template-picker-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1em;
+}
+
+.template-picker-wrapper .selectedItem {
+  background-color: #ccc;
+}
+
+/* Esri redeclarations? */
+.templatePicker .dojoxGridHiddenFocus {
+  display: none;
+}
+
+.templatePicker td.dojoxGridCell {
+  width: calc(100% / 3) !important;
+  vertical-align: top;
+}
+
+.HomeButton {
+  position: absolute;
+  top: 138px;
+  left: 15px;
+  z-index: 1;
+}
+
+.bg-warning {
+  padding: 1em;
+}
+
+.slider-layer-name {
+  font-weight: bold;
+}
+
+/* Override Esri's override of Bootstrap's .btn-lg for panel for inputs */
+/*.calcite-maps.layout-mobile-focus .panel-body .btn-lg {
+  padding: 10px 16px;
+  font-size: 20px;
+}
+*/
+
+/**
+ * Layers legend
+ */
+
+/* Suppress transparent-fill classes */
+div[id='legendDiv_Water Quality Risk'] .esriLegendLayer tr:nth-child(3),
+div[id='legendDiv_Water Quality Risk'] .esriLegendLayer tr:nth-child(4),
+div[id='legendDiv_Soil Erosion Risk'] .esriLegendLayer tr:nth-child(3),
+div[id='legendDiv_Soil Erosion Risk'] .esriLegendLayer tr:nth-child(4),
+div[id='legendDiv_Crop Productivity'] .esriLegendLayer tr:nth-child(3),
+div[id='legendDiv_Crop Productivity'] .esriLegendLayer tr:nth-child(4) {
+  display: none !important;
+}
+
+.esriLegendLayerLabel {
+  display: none;
+}
+
+/* Remove indent on nested legend classes */
+.calcite .esriLegendLeft {
+  margin-left: 0;
+  padding-left: 0 !important;
+}
+
+.calcite .esriLegendService > div {
+  padding-left: 0 !important;
+}
+
+/**
+ * Price controls
+ */
+.price-control {
+  margin-bottom: 17px;
+}
+.price-control > span {
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.price-control > span > span {
+  font-weight: normal;
+}
+
+/**
+ * Results areas: Charts, tables, numbers
+ */
+.layout-mobile-focus .compare-tab .results-compare {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(400px + 46px);
+  width: 100%;
+  height: calc(100% - 446px);  /* subtract header height and compare map height */
+  background-color: #eee;
+}
+
+#compareDiv {
+  width: calc(100% - 376px);
+}
+
+.results-area {
+  padding-top: 10px;
+}
+
+.results-area > div {
+  float: left;
+  width: calc((100% - 140px) / 7);
+  margin: 10px;
+}
+
+#compareDiv > div {
+  width: calc((100% - 120px) / 5);
+}
+
+.results-area svg {
+  width: 100%;
+}
+
+.layout-mobile-focus .results-tab .results-single {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 400px;
+  background-color: #eee;
+}
+
+.chart-total text {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.chart-title text {
+  font-size: 16px;
+}
+
+/* only bold titles, not subtitles */
+.chart-title text:first-child {
+  font-weight: bold;
+}
+
+.legend .chart-title text {
+  font-weight: bold;
+}
+
+.acreage-table thead {
+  background-color: #ddd;
+}
+
+.acreage-table thead th {
+  text-align: center;
+}
+
+#compareDiv > #acreageTableCompare {
+  float: right;
+  width: auto;
+  margin-right: 47px;
+}
+
+/* Loading background mask */
+.loading-mask {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  background-color: #323232;
+  opacity: 0.75;
+}
+
+/* Spinner animation */
+@-webkit-keyframes uil-default-anim {
+    0% {
+        opacity: 1
+    }
+    100% {
+        opacity: 0
+    }
+}
+
+@keyframes uil-default-anim {
+    0% {
+        opacity: 1
+    }
+    100% {
+        opacity: 0
+    }
+}
+
+.uil-default-css > div:nth-of-type(1) {
+    -webkit-animation: uil-default-anim 1s linear infinite;
+    animation: uil-default-anim 1s linear infinite;
+    -webkit-animation-delay: -0.5s;
+    animation-delay: -0.5s;
+}
+
+.uil-default-css {
+    position: fixed;
+    top: calc(50% - 100px);
+    left: calc(50% - 100px);
+    background: none;
+    width: 200px;
+    height: 200px;
+    z-index: 200;
+}
+
+.uil-default-css > div:nth-of-type(2) {
+    -webkit-animation: uil-default-anim 1s linear infinite;
+    animation: uil-default-anim 1s linear infinite;
+    -webkit-animation-delay: -0.4166666666666667s;
+    animation-delay: -0.4166666666666667s;
+}
+
+.uil-default-css > div:nth-of-type(3) {
+    -webkit-animation: uil-default-anim 1s linear infinite;
+    animation: uil-default-anim 1s linear infinite;
+    -webkit-animation-delay: -0.33333333333333337s;
+    animation-delay: -0.33333333333333337s;
+}
+
+.uil-default-css > div:nth-of-type(4) {
+    -webkit-animation: uil-default-anim 1s linear infinite;
+    animation: uil-default-anim 1s linear infinite;
+    -webkit-animation-delay: -0.25s;
+    animation-delay: -0.25s;
+}
+
+.uil-default-css > div:nth-of-type(5) {
+    -webkit-animation: uil-default-anim 1s linear infinite;
+    animation: uil-default-anim 1s linear infinite;
+    -webkit-animation-delay: -0.16666666666666669s;
+    animation-delay: -0.16666666666666669s;
+}
+
+.uil-default-css > div:nth-of-type(6) {
+    -webkit-animation: uil-default-anim 1s linear infinite;
+    animation: uil-default-anim 1s linear infinite;
+    -webkit-animation-delay: -0.08333333333333331s;
+    animation-delay: -0.08333333333333331s;
+}
+
+.uil-default-css > div:nth-of-type(7) {
+    -webkit-animation: uil-default-anim 1s linear infinite;
+    animation: uil-default-anim 1s linear infinite;
+    -webkit-animation-delay: 0s;
+    animation-delay: 0s;
+}
+
+.uil-default-css > div:nth-of-type(8) {
+    -webkit-animation: uil-default-anim 1s linear infinite;
+    animation: uil-default-anim 1s linear infinite;
+    -webkit-animation-delay: 0.08333333333333337s;
+    animation-delay: 0.08333333333333337s;
+}
+
+.uil-default-css > div:nth-of-type(9) {
+    -webkit-animation: uil-default-anim 1s linear infinite;
+    animation: uil-default-anim 1s linear infinite;
+    -webkit-animation-delay: 0.16666666666666663s;
+    animation-delay: 0.16666666666666663s;
+}
+
+.uil-default-css > div:nth-of-type(10) {
+    -webkit-animation: uil-default-anim 1s linear infinite;
+    animation: uil-default-anim 1s linear infinite;
+    -webkit-animation-delay: 0.25s;
+    animation-delay: 0.25s;
+}
+
+.uil-default-css > div:nth-of-type(11) {
+    -webkit-animation: uil-default-anim 1s linear infinite;
+    animation: uil-default-anim 1s linear infinite;
+    -webkit-animation-delay: 0.33333333333333337s;
+    animation-delay: 0.33333333333333337s;
+}
+
+.uil-default-css > div:nth-of-type(12) {
+    -webkit-animation: uil-default-anim 1s linear infinite;
+    animation: uil-default-anim 1s linear infinite;
+    -webkit-animation-delay: 0.41666666666666663s;
+    animation-delay: 0.41666666666666663s;
+}
